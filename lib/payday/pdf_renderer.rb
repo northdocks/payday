@@ -110,11 +110,7 @@ module Payday
 
         # Due on
         if defined?(invoice.due_at) && invoice.due_at
-          if invoice.due_at.is_a?(Date) || invoice.due_at.is_a?(Time)
-            due_date = invoice.due_at.strftime(Payday::Config.default.date_format)
-          else
-            due_date = invoice.due_at.to_s
-          end
+          due_date = Payday::Config.default.date_formatter.call(invoice.due_at)
 
           table_data << [bold_cell(pdf, I18n.t('payday.invoice.due_date', :default => "Due Date:")),
               bold_cell(pdf, due_date, :align => :right)]
@@ -122,11 +118,7 @@ module Payday
 
         # Paid on
         if defined?(invoice.paid_at) && invoice.paid_at
-          if invoice.paid_at.is_a?(Date) || invoice.due_at.is_a?(Time)
-            paid_date = invoice.paid_at.strftime(Payday::Config.default.date_format)
-          else
-            paid_date = invoice.paid_at.to_s
-          end
+          paid_date = Payday::Config.default.date_formatter.call(invoice.paid_at)
 
           table_data << [bold_cell(pdf, I18n.t('payday.invoice.paid_date', :default => "Paid Date:")),
               bold_cell(pdf, paid_date, :align => :right)]
