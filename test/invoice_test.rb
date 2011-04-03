@@ -7,7 +7,7 @@ module Payday
       i = Invoice.new(:invoice_number => 20, :bill_to => "Here", :ship_to => "There",
           :notes => "These are some notes.",
           :line_items => [LineItem.new(:price => 10, :quantity => 3, :description => "Shirts")],
-          :shipping_rate => 15.00, :shipping_description => "USPS Priority Mail:",
+          :shipping_fee => Money.us_dollar(1500), :shipping_description => "USPS Priority Mail:",
           :tax_rate => 0.125, :tax_description => "Local Sales Tax, 12.5%")
 
       assert_equal 20, i.invoice_number
@@ -15,7 +15,7 @@ module Payday
       assert_equal "There", i.ship_to
       assert_equal "These are some notes.", i.notes
       assert_equal "Shirts", i.line_items[0].description
-      assert_equal BigDecimal.new("15.00"), i.shipping_rate
+      assert_equal Money.us_dollar(1500), i.shipping_fee
       assert_equal "USPS Priority Mail:", i.shipping_description
       assert_equal BigDecimal.new("0.125"), i.tax_rate
       assert_equal "Local Sales Tax, 12.5%", i.tax_description
@@ -25,44 +25,44 @@ module Payday
       i = Invoice.new
 
       # $100 in Pants
-      i.line_items << LineItem.new(:price => 20, :quantity => 5, :description => "Pants")
+      i.line_items << LineItem.new(:price => 2000, :quantity => 5, :description => "Pants")
 
       # $30 in Shirts
-      i.line_items << LineItem.new(:price => 10, :quantity => 3, :description => "Shirts")
+      i.line_items << LineItem.new(:price => 1000, :quantity => 3, :description => "Shirts")
 
       # $1000 in Hats
-      i.line_items << LineItem.new(:price => 5, :quantity => 200, :description => "Hats")
+      i.line_items << LineItem.new(:price => 500, :quantity => 200, :description => "Hats")
 
-      assert_equal BigDecimal.new("1130"), i.subtotal
+      assert_equal Money.us_dollar(113000), i.subtotal
     end
 
     test "that tax returns the correct tax amount, rounded to two decimal places" do
       i = Invoice.new(:tax_rate => 0.1)
-      i.line_items << LineItem.new(:price => 20, :quantity => 5, :description => "Pants")
+      i.line_items << LineItem.new(:price => 2000, :quantity => 5, :description => "Pants")
 
-      assert_equal(BigDecimal.new("10"), i.tax)
+      assert_equal(Money.us_dollar(1000), i.tax)
     end
 
     test "that taxes aren't applied to invoices with a subtotal of 0 or a negative amount" do
       i = Invoice.new(:tax_rate => 0.1)
       i.line_items << LineItem.new(:price => -1, :quantity => 100, :description => "Negative Priced Pants")
 
-      assert_equal(BigDecimal.new("0"), i.tax)
+      assert_equal(Money.us_dollar(0), i.tax)
     end
 
     test "that the total for this invoice calculates correctly" do
       i = Invoice.new(:tax_rate => 0.1)
 
       # $100 in Pants
-      i.line_items << LineItem.new(:price => 20, :quantity => 5, :description => "Pants")
+      i.line_items << LineItem.new(:price => 2000, :quantity => 5, :description => "Pants")
 
       # $30 in Shirts
-      i.line_items << LineItem.new(:price => 10, :quantity => 3, :description => "Shirts")
+      i.line_items << LineItem.new(:price => 1000, :quantity => 3, :description => "Shirts")
 
       # $1000 in Hats
-      i.line_items << LineItem.new(:price => 5, :quantity => 200, :description => "Hats")
+      i.line_items << LineItem.new(:price => 500, :quantity => 200, :description => "Hats")
 
-      assert_equal BigDecimal.new("1243"), i.total
+      assert_equal Money.us_dollar(124300), i.total
     end
 
     test "overdue? is false when past date and unpaid" do

@@ -7,13 +7,18 @@ module Payday
   class LineItem
     include LineItemable
 
-    attr_accessor :description, :quantity, :price
+    attr_accessor :description, :quantity, :price, :currency
 
     # Initializes a new LineItem
     def initialize(options = {})
+      self.currency = options[:currency]
+      self.price = options[:price] || Money.new(0, currency)
       self.quantity = options[:quantity] || "1"
-      self.price = options[:price] || Money.new(0, Payday::Config.default.currency)
       self.description = options[:description] || ""
+    end
+
+    def currency
+      price.try(:currency) || @currency || Payday::Config.default.currency
     end
 
     # Sets the quantity of this {LineItem}
@@ -23,10 +28,11 @@ module Payday
 
     # Sets the price for this {LineItem}
     def price=(value)
-      if [BigDecimal, Money].include?(value.class)
+      case value
+      when Money
         @price = value
       else
-        @price = BigDecimal.new(value.to_s)
+        @price = Money.new(value, currency)
       end
     end
   end
