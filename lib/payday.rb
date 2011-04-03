@@ -3,6 +3,7 @@ require 'date'
 require 'time'
 require 'bigdecimal'
 require 'prawn'
+require 'active_support/all'
 require 'money'
 
 require 'payday/version'
