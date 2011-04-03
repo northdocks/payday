@@ -38,7 +38,7 @@ module Payday::Invoiceable
   # TODO Add a per weight unit shipping cost
   # Calculates the shipping
   def shipping
-    if shipping_fee
+    if defined?(shipping_fee) and shipping_fee
       shipping_fee
     else
       Money.new(0, currency)
