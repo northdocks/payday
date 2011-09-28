@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("activesupport", ">= 3.0.0")
   s.add_dependency("prawn", "~> 0.11.1.pre")
-  s.add_dependency("i18n", "~> 0.5.0")
+  s.add_dependency("i18n", ">= 0.5.0")
 
   s.add_development_dependency("minitest")
 
